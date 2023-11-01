@@ -1,5 +1,5 @@
 import Express from "express";
-import { PORT, USER, DATABASE, PASSWORD } from "./configs.js";
+import { PORT } from "./configs.js";
 import { router } from "./routes/users.routes.js";
 
 const app = Express();
