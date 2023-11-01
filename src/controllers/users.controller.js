@@ -1,54 +1,52 @@
-import { usuarios } from "../index.js";
+import { pool } from "../database.js";
 
 const userController = {};
 
-userController.createUser = (req, res) => {
-    const { nombre, edad } = req.body;
-    let newId = 1;
-    if (usuarios.length) {
-        newId = usuarios[usuarios.length - 1].id + 1;
-    }
-    const usuario = {id: newId, nombre: nombre, edad: edad };
-    usuarios.push(usuario);
-    res.send("Guardado con éxito");
-}
-
-userController.getUsers = (req, res) => {
-    res.json(usuarios);
-}
-
-userController.updateUser = (req, res) => {
-    const { id } = req.params;
-    const { nombre, edad } = req.body;
-    let ind;
-    let usuario = usuarios.find((item, index) => {
-        if (item.id == id) {
-            ind = index;
-            return true;
-        }
-    });
-    if (usuario) {
-        usuario.nombre = nombre;
-        usuario.edad = edad;
-        usuarios[ind] = usuario;
-        res.send("Se actualizó el usuario correctamente");
-    } else {
-        res.send("No se encontró el usuario");
+userController.createUser = async (req, res) => {
+    try {
+        const { nombre, edad } = req.body;
+        const result = await pool.query(`INSERT INTO usuarios (id, nombre, edad) 
+            VALUES (NULL,?,?)`,
+            [nombre, edad]);
+        res.json({ "message": "Guardado con éxito" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({"message": "Error al guardar en la base de datos"});
     }
 }
 
-userController.deleteUser = (req, res) => {
-    const { id } = req.params;
-    let ind = usuarios.findIndex((item) => item.id == id);
-    if (ind != -1) {
-        let eliminado = usuarios.splice(ind, 1);
-        if (eliminado) {
-            res.json({"mensaje": "Se eliminó el usuario: ", eliminado});
-        } else {
-            res.send("No se encontró el usuario");
-        }
-    } else {
-        res.send("No se encontró el usuario");
+userController.getUsers = async (req, res) => {
+    try {
+        const [ result ] = await pool.query("SELECT id, nombre, edad FROM usuarios");
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({"message": "Error al consultar la base de datos"});
+    }
+}
+
+userController.updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, edad } = req.body;
+        const result = await pool.query(`UPDATE usuarios 
+            SET nombre=?, edad=? WHERE id=${id}`, 
+            [nombre, edad]);
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({"message": "Error al actualizar el usuario en la base de datos"});
+    }
+}
+
+userController.deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(`DELETE FROM usuarios WHERE id=${id}`);
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({"message": "Error al borrar usuario de la base de datos"});
     }
 }
 

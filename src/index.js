@@ -1,28 +1,6 @@
 import Express from "express";
+import { PORT, USER, DATABASE, PASSWORD } from "./configs.js";
 import { router } from "./routes/users.routes.js";
-
-const PORT = 4000;
-
-export const usuarios = [{
-    id: 1,
-    nombre: "Juan Pérez",
-    edad: 40
-},
-{
-    id: 2,
-    nombre: "María Dominguez",
-    edad: 30
-},
-{
-    id: 3,
-    nombre: "Pablo Martinez",
-    edad: 35
-},
-{
-    id: 4,
-    nombre: "Estela García",
-    edad: 55
-}]
 
 const app = Express();
 
