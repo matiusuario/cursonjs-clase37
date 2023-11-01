@@ -2,7 +2,7 @@
 
 ## Una API REST desde cero con Node.js y Express
 
-CRUD sencillo sobre usuarios almacenados en memoria que responde a:
+CRUD sencillo sobre usuarios almacenados en base de datos que responde a:
 
 - /usuarios [GET] Devuelve la lista de usuarios.
 - /usuarios [POST] Agrega un usuario que toma del body.
